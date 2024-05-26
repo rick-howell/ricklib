@@ -1,0 +1,22 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ricklib"
+version = "0.0.2"
+authors = [
+  { name="Richard (Rick) Howell", email="rick.howell.arts@gmail.com" },
+]
+description = "A small package for personal use including useful operations."
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/rick-howell/ricklib"
+Issues = "https://github.com/rick-howell/ricklib/issues"
