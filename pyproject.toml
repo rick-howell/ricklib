@@ -4,9 +4,9 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ricklib"
-version = "0.0.2"
+version = "0.0.3"
 authors = [
-  { name="Richard (Rick) Howell", email="rick.howell.arts@gmail.com" },
+  {name="Richard (Rick) Howell", email="rick.howell.arts@gmail.com"},
 ]
 description = "A small package for personal use including useful operations."
 readme = "README.md"
@@ -16,6 +16,7 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
+license = {file = "LICENSE"}
 
 [project.urls]
 Homepage = "https://github.com/rick-howell/ricklib"

@@ -4,8 +4,12 @@ This is a work in progress library for things like rendering mathematical images
 
 # Modules
 
-__graphical things__
+## __graphical things__
 
 ### pngenerator
-
 Creates png files from lists
+
+## __audio things__
+
+### audio
+turn lists into .wav files
