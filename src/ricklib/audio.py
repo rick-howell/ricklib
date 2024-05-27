@@ -45,7 +45,12 @@ def test_data() -> list:
     length = sec2smp(seconds=2)
     hz = 400
     for i in range(0, length):
-        data.append(math.sin(2 * math.pi * hz * i / DEFAULT_SAMPLE_RATE))
+        f = math.sin(2 * math.pi * hz * i / DEFAULT_SAMPLE_RATE)
+        if f < -1:
+            f = -1
+        elif f > 1:
+            f = 1
+        data.append(f)
     
     return data
 
@@ -85,12 +90,15 @@ def hpf(data: list, cutoff: float = 1000) -> list:
 
 
 def floats2bytes(data: list, bit_depth: int = DEFAULT_BIT_DEPTH) -> bytes:
-    # Convert a list of floats to a list of bytes
+    # Convert a list of floats in [-1, 1] to a list of bytes
     # data: list of floats
     # bit_depth: int, bit depth of the audio data
 
-    # The maximum value of the audio data
-    max_val = 2 ** (bit_depth - 3) - 1
+    # Make sure the floats are in the correct range
+    data = hard_clip(data, 1.0)
+
+    # The maximum value of the audio data with one bit reserved for the sign
+    max_val = 2 ** (bit_depth - 1) - 1
 
     # Convert the floats to ints
     data = [int(d * max_val) for d in data]
