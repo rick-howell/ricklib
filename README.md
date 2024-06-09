@@ -9,7 +9,16 @@ This is a work in progress library for things like rendering mathematical images
 ### pngenerator
 Creates png files from lists
 
+
+
 ## __audio things__
 
 ### audio
-turn lists into .wav files
+lists <-> .wav files
+
+
+
+## __graph things__
+
+### glib
+a graph library

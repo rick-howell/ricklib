@@ -56,7 +56,13 @@ class edge:
 
 class graph:
 
+    # TODO:
+    # Compute eigenvalues
+    # Contract edges and vertices
+    # Build line graphs / dual graphs / ...
+
     def __init__(self):
+        '''A graph is a collection of vertices and edges'''
         self.V = []
         self.E = []
 
@@ -97,13 +103,23 @@ class graph:
             
         raise ValueError(f"Vertex {v} not found in graph")
     
+    def get_incident(self, e):
+        return e.get_vertices()
+    
+    def contains_vertex(self, v):
+        if type(v) == vertex:
+            return v in self.V
+        else:
+            v = str(v)
+            return any([vert.name == v for vert in self.V])
+    
     def remove_vertex(self, name):
         v = self.get_vertex(name)
         if v == None:
             return
         
         self.V.remove(v)
-        self.E = [e for e in self.E if e.u != v and e.v != v]
+        self.E = [e for e in self.E if e.v1 != v and e.v2 != v]
         self.sort_edges()
     
     def contains_edge(self, e):
@@ -211,14 +227,26 @@ class graph:
                 g.add_edge(v1, v2, e.get_weight(), e.directed)
             
         return g
+    
+    def contract(self, *args):
+        '''args:
+            1. a pair of vertices incident to an edge
+            2. an edge
+        '''
+        
+        if len(args) == 2:
+            v1, v2 = args
+            e = self.get_edge(v1, v2)
+        else:
+            e = args[0]
+            v1, v2 = e.get_incident()
+
+        if e == None:
+            return
+        
+        pass
 
 
-    def det(self):
-        # Return the determinant of the adjacency matrix of the graph
-        
-        adj = self.adj_matrix()
-        n = len(adj)
-        
 
     def __str__(self):
         s = f'Graph with {len(self.V)} vertices and {len(self.E)} edges\n\n'
@@ -234,3 +262,47 @@ class graph:
         return s
     
 
+def load_mat_file(filename: str):
+    '''mat file should contain a series of graphs in this format:
+    
+        0 1 1 0 0 1 1
+        1 0 0 1 0 1 1
+        1 0 0 0 1 1 1
+        0 1 0 0 1 1 1
+        0 0 1 1 0 1 1
+        1 1 1 1 1 0 1
+        1 1 1 1 1 1 0
+
+        0 0 1 1
+        0 0 1 1
+        1 1 0 1
+        1 1 1 0
+
+        0 0 0 0 1
+        0 0 0 0 1
+        0 0 0 1 0
+        0 0 1 0 1
+        1 1 0 1 0
+
+        ...
+
+    https://houseofgraphs.org/ provides .mat files in this format
+    '''
+
+    graphs = [graph]
+    g = graph()
+    adj = []
+
+    with open(filename, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            if line != '\n':
+                adj.append([int(x) for x in line.split()])
+            else:
+                g.import_adj_matrix(adj)
+                graphs.append(g)
+                g = graph()
+                adj = []
+
+    graphs.pop(0)
+    return graphs
