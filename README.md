@@ -4,21 +4,26 @@ This is a work in progress library for things like rendering mathematical images
 
 # Modules
 
-## __graphical things__
+Graphics
+===
 
 ### pngenerator
 Creates png files from lists
 
 
-
-## __audio things__
+Audio
+===
 
 ### audio
 lists <-> .wav files
 
 
 
-## __graph things__
+Math
+===
 
 ### glib
 a graph library
+
+### polynomial
+a polynomial library
