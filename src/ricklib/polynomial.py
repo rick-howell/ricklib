@@ -4,7 +4,10 @@
 # rick.howell.arts@gmail.com
 
 class Polynomial:
-    '''A class for polynomials. The coefficients are stored in a list, with the index corresponding to the power of x. For example, the polynomial 3x^2 + 2x + 1 would be stored as [1, 2, 3].'''
+    '''A class for polynomials. The coefficients are stored in a list, with the index corresponding to the power of x. For example, the polynomial 3x^2 + 2x + 1 would be stored as [1, 2, 3].
+    
+    This is the basic class for polynomials F[x] for real / complex numbers.
+    '''
 
     def __init__(self, coefficients: list):
         self.coefficients = coefficients
@@ -24,6 +27,14 @@ class Polynomial:
         return sum([self.coefficients[i] * x ** i for i in range(self.degree + 1)])
     
     def _update_degree(self):
+        # Check if coefficients are zero at the end, and if they are, remove them
+        while self.coefficients[-1] == 0:
+            self.coefficients.pop()
+        
+        # If all coefficients are zero, set to zero polynomial
+        if not self.coefficients:
+            self.coefficients = [0]
+        
         self.degree = len(self.coefficients) - 1
 
     def __add__(self, other):
@@ -62,6 +73,16 @@ class Polynomial:
     def __rmul__(self, other):
         return self * other
     
+    def __pow__(self, n: int):
+        '''Raise the polynomial to the power of n'''
+
+        result = Polynomial([1])
+
+        for i in range(n):
+            result *= self
+
+        return result
+    
     def __str__(self):
         return ' + '.join([f'{self.coefficients[i]}x^{i}' for i in range(self.degree + 1)])
     
@@ -79,6 +100,63 @@ class Polynomial:
     def __eq__(self, other):
         return self.coefficients == other.coefficients
     
+    def std(self) -> str:
+        '''Returns a string of the polynomial in standard form
+        i.e. highest power of x first'''
+    
+        s = ''
+        for i in range(self.degree, -1, -1):
+            if self.coefficients[i] == 0:
+                continue
+
+            if self.coefficients[i] > 0:
+                s += ' + ' if s else ''
+            else:
+                s += ' - ' if s else ' - '
+
+            if abs(self.coefficients[i]) != 1 or i == 0:
+                s += str(abs(self.coefficients[i]))
+
+            if i > 0:
+                s += 'x'
+                if i > 1:
+                    s += f'^{i}'
+
+        return s
+
+def from_roots(roots: list) -> Polynomial:
+    '''Returns a polynomial with the given roots'''
+
+    p = Polynomial([1])
+
+    for r in roots:
+        p *= Polynomial([-r, 1])
+
+    return p
+
+
+def compose(p: Polynomial, q: Polynomial) -> Polynomial:
+    '''Returns the composition of two polynomials'''
+
+    result = Polynomial([0])
+
+    for i in range(p.degree + 1):
+        result += p.coefficients[i] * q ** i
+
+    return result
+
+
+def differentiate(p: Polynomial) -> Polynomial:
+    '''Returns the derivative of the polynomial p'''
+
+    return p.differentiate()
+
+
+def integrate(p: Polynomial) -> Polynomial:
+    '''Returns the integral of the polynomial p'''
+
+    return p.integrate()
+
 
 def _lag_basis(x_values: list, j: int) -> Polynomial:
     '''Returns l_j (x)'''
@@ -112,6 +190,8 @@ def lagrange_interpolation(points: list) -> Polynomial:
 
 
 def _test():
+    coeff_file = 'tests/test_coeffs.dat'
+
     a = Polynomial([1, 1])
     b = Polynomial([3, 1])
     print(a * b)
@@ -125,7 +205,7 @@ def _test():
     print(p1(2))
     print(p1.differentiate())
     print(p1.integrate())
-    p1.save('test_coeffs.dat')
+    p1.save(coeff_file)
     print(f'Saved polynomial: {p1}')
     p3 = Polynomial([1, 2, 3])
     print(p1 == p3)
@@ -134,11 +214,22 @@ def _test():
     points = [(1, 1), (2, 4), (3, 9)]
     print(points)
     p3 = lagrange_interpolation(points)
-    print(p3)   # Should be x^2
+    print(p3.std())   # Should be x^2
 
     p4 = Polynomial([])
-    p4.load('test_coeffs.dat')
+    p4.load(coeff_file)
     print(f'from loaded coefficients: {p4}')
+
+    print('Polynomial from roots (x-1)(x-2)(x-3):')
+    p5 = from_roots([1, 2, 3])
+    print(p5)
+    print(p5.std())
+
+    print('Composition of polynomials:')
+    p6 = Polynomial([0, 2, 1])
+    p7 = Polynomial([2, 3])
+
+    print(f'p6 = {p6.std()}, p7 = {p7.std()}, p6(p7) = {compose(p6, p7).std()}')
 
 if __name__ == '__main__':
     _test()
