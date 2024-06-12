@@ -101,7 +101,7 @@ class graph:
                 if vert.name == v:
                     return vert
             
-        raise ValueError(f"Vertex {v} not found in graph")
+        raise ValueError(f'Vertex {v} not found in graph')
     
     def get_incident(self, e):
         return e.get_vertices()
@@ -204,6 +204,8 @@ class graph:
                         self.add_edge(self.V[i], self.V[j])
 
     def nbhd(self, v, closed = False):
+        '''Returns the neighborhood of a vertex'''
+
         v = self.get_vertex(v)
         if v == None:
             return None
@@ -262,6 +264,26 @@ class graph:
         return s
     
 
+
+def get_neighbors(graph, vertex):
+    '''Returns the neighbors of a vertex in a graph'''
+
+    v = graph.get_vertex(vertex)
+    if v == None:
+        return None
+    
+    neighbors = []
+    for e in graph.E:
+        v1, v2 = e.get_vertices()
+        if v1 == v:
+            neighbors.append(v2)
+        elif v2 == v:
+            neighbors.append(v1)
+    
+    return neighbors
+
+
+
 def load_mat_file(filename: str):
     '''mat file should contain a series of graphs in this format:
     
@@ -306,3 +328,80 @@ def load_mat_file(filename: str):
 
     graphs.pop(0)
     return graphs
+
+
+def star(n: int) -> graph:
+    '''Returns a star graph with n leaves and n + 1 vertices'''
+
+    g = graph()
+    g.add_vertex()
+
+    for i in range(1, n + 1):
+        g.add_vertex()
+        g.add_edge(0, i)
+    
+    return g
+
+
+def cycle(n: int) -> graph:
+    '''Returns a cycle graph with n vertices'''
+
+    g = graph()
+    for i in range(n):
+        g.add_vertex()
+    
+    for i in range(n):
+        g.add_edge(i, (i + 1) % n)
+    
+    return g
+
+
+def complete(n: int) -> graph:
+    '''Returns a complete graph with n vertices'''
+
+    g = graph()
+    for i in range(n):
+        g.add_vertex()
+    
+    for i in range(n):
+        for j in range(i + 1, n):
+            g.add_edge(i, j)
+    
+    return g
+
+
+def mesh(m: int, n: int) -> graph:
+    '''Returns an m x n mesh graph'''
+
+    g = graph()
+    for i in range(m):
+        for j in range(n):
+            g.add_vertex()
+    
+    for i in range(m):
+        for j in range(n):
+            if i > 0:
+                g.add_edge((i - 1) * n + j, i * n + j)
+            if j > 0:
+                g.add_edge(i * n + j - 1, i * n + j)
+    
+    return g
+
+
+def _test():
+
+    g1 = star(5)
+    print(f'S5: {g1}')
+
+    g2 = cycle(5)
+    print(f'C5: {g2}')
+
+    g3 = complete(5)
+    print(f'K5: {g3}')
+
+    g4 = mesh(3, 3)
+    print(f'M3x3: {g4}')
+
+
+if __name__ == "__main__":
+    _test()

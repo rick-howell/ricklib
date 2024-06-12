@@ -78,7 +78,7 @@ class Polynomial:
 
         result = Polynomial([1])
 
-        for i in range(n):
+        for _ in range(n):
             result *= self
 
         return result
