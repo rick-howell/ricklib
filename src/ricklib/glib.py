@@ -61,16 +61,23 @@ class graph:
     # Contract edges and vertices
     # Build line graphs / dual graphs / ...
 
-    def __init__(self):
+    def __init__(self, integer_names = True):
         '''A graph is a collection of vertices and edges'''
         self.V = []
         self.E = []
+        self.integer_names = integer_names
 
     def sort_vertices(self):
-        self.V.sort(key = lambda x: x.name)
+        if self.integer_names:
+            self.V.sort(key = lambda x: int(x.name))
+        else:
+            self.V.sort(key = lambda x: x.name)
 
     def sort_edges(self):
-        self.E.sort(key = lambda x: (x.v1.name, x.v2.name))
+        if self.integer_names:
+            self.E.sort(key = lambda x: (int(x.v1.name), int(x.v2.name)))
+        else:
+            self.E.sort(key = lambda x: (x.v1.name, x.v2.name))
 
     def add_vertex(self, name = None, value = None):
         # Add a vertex the graph with the given name and value
@@ -312,7 +319,7 @@ def load_mat_file(filename: str):
     '''
 
     graphs = [graph]
-    g = graph()
+    g = graph(integer_names=True)
     adj = []
 
     with open(filename, 'r') as f:
@@ -333,7 +340,7 @@ def load_mat_file(filename: str):
 def star(n: int) -> graph:
     '''Returns a star graph with n leaves and n + 1 vertices'''
 
-    g = graph()
+    g = graph(integer_names=True)
     g.add_vertex()
 
     for i in range(1, n + 1):
@@ -346,7 +353,7 @@ def star(n: int) -> graph:
 def cycle(n: int) -> graph:
     '''Returns a cycle graph with n vertices'''
 
-    g = graph()
+    g = graph(integer_names=True)
     for i in range(n):
         g.add_vertex()
     
@@ -359,7 +366,7 @@ def cycle(n: int) -> graph:
 def complete(n: int) -> graph:
     '''Returns a complete graph with n vertices'''
 
-    g = graph()
+    g = graph(integer_names=True)
     for i in range(n):
         g.add_vertex()
     
@@ -373,7 +380,7 @@ def complete(n: int) -> graph:
 def mesh(m: int, n: int) -> graph:
     '''Returns an m x n mesh graph'''
 
-    g = graph()
+    g = graph(integer_names=True)
     for i in range(m):
         for j in range(n):
             g.add_vertex()
@@ -384,6 +391,28 @@ def mesh(m: int, n: int) -> graph:
                 g.add_edge((i - 1) * n + j, i * n + j)
             if j > 0:
                 g.add_edge(i * n + j - 1, i * n + j)
+    
+    return g
+
+
+def kinggraph(m: int, n: int) -> graph:
+    '''Returns an m x n king graph'''
+
+    g = graph(integer_names=True)
+    for i in range(m):
+        for j in range(n):
+            g.add_vertex()
+    
+    for i in range(m):
+        for j in range(n):
+            if i > 0:
+                g.add_edge((i - 1) * n + j, i * n + j)
+            if j > 0:
+                g.add_edge(i * n + j - 1, i * n + j)
+            if i > 0 and j > 0:
+                g.add_edge((i - 1) * n + j - 1, i * n + j)
+            if i > 0 and j < n - 1:
+                g.add_edge((i - 1) * n + j + 1, i * n + j)
     
     return g
 
@@ -402,6 +431,8 @@ def _test():
     g4 = mesh(3, 3)
     print(f'M3x3: {g4}')
 
+    g5 = kinggraph(5, 5)
+    print(f'K3x3: {g5}')
 
 if __name__ == "__main__":
     _test()
