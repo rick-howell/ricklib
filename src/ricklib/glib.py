@@ -216,8 +216,6 @@ class graph:
         v = self.get_vertex(v)
         if v == None:
             return None
-        
-        print(f"Neighborhood of {v.name}:")
 
         g = graph()
         if closed:
