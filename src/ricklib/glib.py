@@ -1,5 +1,8 @@
 # A class for graph theory operations
 
+import graphics2d as g2d
+import random
+
 class vertex:
 
     def __init__(self, name, value = None):
@@ -253,8 +256,6 @@ class graph:
         
         pass
 
-
-
     def __str__(self):
         s = f'Graph with {len(self.V)} vertices and {len(self.E)} edges\n\n'
 
@@ -268,6 +269,38 @@ class graph:
         
         return s
     
+    def export(self, filename: str = 'graph.png') -> None:
+        '''Returns a list of lists representing a printout of the graph'''
+
+        # We'll use the graphics2d library to plot the graph
+        vert_rad = 10
+
+        n = len(self.V) + len(self.E)
+        margin = 10 + vert_rad
+
+        frame = g2d.Frame(margin + n ** 2, margin + n ** 2)
+        frame.fill(g2d.Color.WHITE)
+
+
+
+        vert_coords = dict()
+        for v in self.V:
+            x = random.randint(margin, frame.width - margin)
+            y = random.randint(margin, frame.height - margin)
+            vert_coords.update({v.name: (x, y)})
+
+            frame.draw_circle((x, y), vert_rad, g2d.Color.BLACK)
+
+        for e in self.E:
+            v1, v2 = e.get_vertices()
+            x1, y1 = vert_coords.get(v1.name)
+            x2, y2 = vert_coords.get(v2.name)
+
+            frame.draw_line((x1, y1), (x2, y2), g2d.Color.BLACK)
+
+        frame.export(filename)
+    
+
 
 
 def get_neighbors(graph, vertex):
@@ -431,6 +464,15 @@ def _test():
 
     g5 = kinggraph(5, 5)
     print(f'K3x3: {g5}')
+
+    nbhd = g5.nbhd(0)
+    print(f'Nbhd of 0: {nbhd}')
+
+    g3.export('tests/complete.png')
+
+    matlist = load_mat_file('tests/g0g1.mat')
+    for i in range(10):
+        matlist[100 + i * 20].export(f'tests/{100 + i * 20}.png')
 
 if __name__ == "__main__":
     _test()

@@ -7,6 +7,9 @@ This is a work in progress library for things like rendering mathematical images
 Graphics
 ===
 
+### graphcs2d
+Make a frame and add circles / lines to it! Very primitive, but used in printing graphs in glib
+
 ### pngenerator
 Creates png files from lists
 
